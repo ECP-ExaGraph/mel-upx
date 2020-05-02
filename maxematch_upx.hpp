@@ -86,25 +86,6 @@ class MaxEdgeMatchUPX
             qbuf_ = new GraphElem[nelems_];
             assert(qbuf_);
 
-#if defined(DEBUG_BUILD)
-            /*
-             * If running a debug build, add logic to validate that no
-             * out-of-bounds accesses occur on remote buffers from this rank.
-             */
-            GraphElem *my_nelems = new GraphElem[size_];
-            assert(my_nelems);
-            all_pes_nelems_ = new GraphElem[size_];
-            assert(all_pes_nelems_);
-            for (int i = 0; i < size_; i++) {
-                my_nelems[i] = nelems_;
-            }
-            MPI_Alltoall(my_nelems, 1, MPI_GRAPH_TYPE, 
-                    all_pes_nelems_, 1, MPI_GRAPH_TYPE, MPI_COMM_WORLD);
-            delete my_nelems;
-
-            upcxx::barrier();
-#endif
-
 
             // prefix sum for calculating 
             // indices of outgoing buffers
@@ -361,23 +342,12 @@ class MaxEdgeMatchUPX
         {
             const GraphElem index = nghosts_indices_[target] + scounts_[target];
 
-#if defined(DEBUG_BUILD)
-            assert(index + 2 < nelems_);
-#endif
             qbuf_[index] = data[0];
             qbuf_[index + 1] = data[1];
             qbuf_[index + 2] = tag;
 
             // get displacement
             GraphElem tdisp = rdispls_[target] + scounts_[target];
-#if defined(DEBUG_BUILD)
-            if (!(tdisp + 2 < all_pes_nelems_[target])) {
-                fprintf(stderr, "Out of bounds in send from %d -> %d. "
-                        "tdisp+2=%lu, remote nelems=%lu\n", rank_, target,
-                        tdisp+2, all_pes_nelems_[target]);
-                abort();
-            }
-#endif
 
             futs_ = upcxx::when_all(futs_,
                     upcxx::rput(&qbuf_[index], gptrs_[target] + tdisp, 3));
@@ -694,9 +664,6 @@ class MaxEdgeMatchUPX
         // number of elements on data window
         // and local data buffer
         GraphElem nelems_;
-#if defined(DEBUG_BUILD)
-        GraphElem *all_pes_nelems_;
-#endif
     
         // count of ghost vertices not owned by me
         GraphElem *ghost_count_; 
