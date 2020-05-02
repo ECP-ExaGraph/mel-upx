@@ -5,9 +5,9 @@ matching. Please review the following paper for the serial
 algorithm, based on Manne-Bisseling: 
 http://www.staff.science.uu.nl/~bisse101/Articles/CP75.pdf
 
-Also attached is a binary input file (karate.bin), for
-Karate network 
-( https://en.wikipedia.org/wiki/Zachary%27s_karate_club ).
+This is based on our MPI-based implementation, discussed 
+approach in paper:
+https://ieeexplore.ieee.org/abstract/document/8820975
 
 Compile
 -------
