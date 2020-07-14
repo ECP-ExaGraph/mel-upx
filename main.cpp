@@ -17,6 +17,7 @@
 #if defined(USE_UPX_RPC)
 #include "maxematch_upx_rpc.hpp"
 #else
+#define USE_UPX_RMA 1
 #include "maxematch_upx.hpp"
 #endif
 
@@ -40,11 +41,17 @@ int main(int argc, char *argv[])
 {
     double t0, t1, td, td0, td1;
 
-    MPI_Init(&argc, &argv);
+#if defined(USE_UPX_RPC) || defined(USE_UPX_RMA)
+    upcxx::init(); // init UPC++
+#endif
+
+    // init MPI, if necessary
+    int mpi_already_init;
+    MPI_Initialized(&mpi_already_init);
+    if (!mpi_already_init) MPI_Init(&argc, &argv);
+
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &me);
-
-    upcxx::init();
     
     MPI_Barrier(MPI_COMM_WORLD);
     
@@ -170,11 +177,13 @@ int main(int argc, char *argv[])
 #endif
     MPI_Barrier(MPI_COMM_WORLD);
 
-#if defined(USE_UPX_RPC) || defined(USE_UPX_RMA)
-    upcxx::finalize();
-#endif
 
-    MPI_Finalize();
+    // Finalize MPI only if we initted it
+    if (!mpi_already_init) MPI_Finalize();
+
+#if defined(USE_UPX_RPC) || defined(USE_UPX_RMA)
+    upcxx::finalize(); // finalize UPC++
+#endif
 
     return 0;
 }
