@@ -65,7 +65,8 @@ Possible options (can be combined):
 | Option          | Description                                               |
 | --------------- | --------------------------------------------------------- |
 | `-f <bin-file>` | Specify input binary file after this argument.            |
-| `-n <vertices>` | Pass total number of vertices of the generated graph.     |
+| `-b`            | Use an balanced graph distribution to reduce communication. |
+| `-n <vertices>` | Pass total number of vertices of the generated graph.       |
 | `-l`            | Use distributed LCG for randomly choosing edges. If this option is not used, we will use C++ random number generator (using `std::default_random_engine`). |
 | `-p <percent>`  | Specify percent of overall edges to be randomly generated between processes. |
 | `-w`            | Use Euclidean distance as edge weight. If this option is not used, edge weights are considered as 1.0. Generate edge weight uniformly between (0,1) if Euclidean distance is not available (applicable to randomly generated edges). |
