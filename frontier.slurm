@@ -30,12 +30,12 @@ pes=$(($n*$ppn))
 for file in $DATA_PATH/*; do
 echo "Half-approx Graph Matching using MPI RMA"
 echo "------------------------------------------"
-srun -N$n -n$pes -c1 --cpu-bind=threads --threads-per-core=1 $BIN_PATH_RMA/./match -b -f $file
+srun -N$n -n$pes -c1 --cpu-bind=threads --threads-per-core=1 $BIN_PATH_RMA/./match -f $file
 echo "Half-approx Graph Matching using UPC++ RMA"
 echo "------------------------------------------"
-srun -N$n -n$pes -c1 --cpu-bind=threads --threads-per-core=1 $BIN_PATH/./match_rma -b -f $file
+srun -N$n -n$pes -c1 --cpu-bind=threads --threads-per-core=1 $BIN_PATH/./match_rma -f $file
 echo "Half-approx Graph Matching using UPC++ RPC"
 echo "------------------------------------------"
-srun -N$n -n$pes -c1 --cpu-bind=threads --threads-per-core=1 $BIN_PATH/./match_rpc -b -f $file
+srun -N$n -n$pes -c1 --cpu-bind=threads --threads-per-core=1 $BIN_PATH/./match_rpc -f $file
 done
 done
